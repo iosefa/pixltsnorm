@@ -136,8 +136,10 @@ and access the library’s functionality.
 
 ## Acknowledgements
 
-- **Joseph Emile Honour Percival** performed the initial research during his PhD at **Kyoto University**, where the pixel-level time-series normalization idea was first applied to multi-sensor analysis.  
+- **Joseph Emile Honour Percival** performed the initial research in 2021 during his PhD at **Kyoto University**, where the pixel-level time-series normalization idea was first applied to multi-sensor analysis.  
 - The global bridging logic is inspired by Roy et al. (2016), which outlines regression-based continuity for Landsat sensors across large areas.
+
+Roy, David P., V. Kovalskyy, H. K. Zhang, Eric F. Vermote, L. Yan, S. S. Kumar, and A. Egorov. "Characterization of Landsat-7 to Landsat-8 reflective wavelength and normalized difference vegetation index continuity." Remote sensing of Environment 185 (2016): 57-70.
 
 ---
 
