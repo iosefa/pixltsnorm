@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pixltsnorm"
+version = "0.1.0"
+description = "Pixel-based Linear Time Series Normalizer"
+authors = [
+  { name="Joseph Emile Honour Percival", email="ipercival@gmail.com" }
+]
+readme = "README.md"
+license = "MIT"
+keywords = ["remote sensing", "time series", "normalization", "NDVI", "Landsat"]
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "pandas",
+  "scikit-learn"
+]
+classifiers = [
+   "Development Status :: 3 - Alpha",
+   "Programming Language :: Python :: 3",
+   "License :: OSI Approved :: MIT License",
+   "Topic :: Scientific/Engineering :: GIS"
+ ]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/landlensdb/landlensdb"
+"Source" = "https://github.com/landlensdb/landlensdb"
