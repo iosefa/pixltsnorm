@@ -1,4 +1,27 @@
-import geemap
+"""
+landsat.py
+==========
+
+Helper functions for working with Landsat imagery in Google Earth Engine (ee).
+Includes:
+- create_reduce_region_function(...) for per-pixel statistical reduction
+- addNDVI(...) and addNBR(...) band-creation functions
+- cloudMaskL457(...) for cloud masking in Landsat 4-7, plus L8
+- scale_factors(...) for optical band scaling
+
+Example usage:
+    import ee
+    from pixltsnorm.earth_engine.landsat import (
+        create_reduce_region_function,
+        addNDVI,
+        addNBR,
+        cloudMaskL457,
+        scale_factors
+    )
+
+    # Then call these functions when building ee.ImageCollections
+"""
+
 import ee
 
 
