@@ -1,14 +1,20 @@
 # pixltsnorm
 
+[![PyPI](https://img.shields.io/pypi/v/pixltsnorm.svg)](https://pypi.org/project/pixltsnorm/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/iosefa/pixltsnorm?logo=docker&label=pulls)](https://hub.docker.com/r/iosefa/pixltsnorm)
+[![Contributors](https://img.shields.io/github/contributors/iosefa/pixltsnorm.svg?label=contributors)](https://github.com/iosefa/pixltsnorm/graphs/contributors)
+[![Tests](https://img.shields.io/github/actions/workflow/status/iosefa/pixltsnorm/main.yml?branch=main)](https://github.com/iosefa/pixltsnorm/actions/workflows/main.yml)
+[![Coverage](https://img.shields.io/codecov/c/github/iosefa/pixltsnorm/main)](https://codecov.io/gh/iosefa/pixltsnorm)
+
 **Pixel-based Linear Time Series Normalizer**
 
 ![Normalized Landsat NDVI Time Series](./docs/images/example.png)
 
 `pixltsnorm` is a small, focused Python library that:
 
-- **Bridges** or **harmonizes** numeric time-series data (e.g., reflectance, NDVI, etc.) across multiple sensors or sources.  
-- **Fits** simple linear transformations (`y = slope*x + intercept`) to map one sensor’s scale onto another.  
-- **Chains** transformations to handle indirect overlaps (sensor0 → sensor1 → …).  
+- **Bridges** or **harmonizes** numeric time-series data (e.g., reflectance, NDVI, etc.) across multiple sensors or sources.
+- **Fits** simple linear transformations (`y = slope*x + intercept`) to map one sensor’s scale onto another.
+- **Chains** transformations to handle indirect overlaps (sensor0 → sensor1 → …).
 - **Filters** outliers using threshold-based filtering before fitting linear models.
 
 Although originally inspired by NDVI normalization across different Landsat sensors, **pixltsnorm** is domain-agnostic. You can use it for any numeric time-series that needs linear alignment.
@@ -17,24 +23,24 @@ Although originally inspired by NDVI normalization across different Landsat sens
 
 ## Features
 
-1. **Outlier Filtering**  
+1. **Outlier Filtering**
    - Removes large disagreements in overlapping time-series pairs, based on a simple threshold for |A - B|.
 
-2. **Local (Pixel-Level) Linear Bridging**  
-   - Regress one sensor’s measurements onto another’s (e.g., a single pixel’s time series).  
+2. **Local (Pixel-Level) Linear Bridging**
+   - Regress one sensor’s measurements onto another’s (e.g., a single pixel’s time series).
    - Produces an easy-to-apply transform function for new data.
 
-3. **Global Bridging**  
-   - Follows the approach of Roy et al. (2016): gather all overlapping values across the entire dataset, fit one “universal” slope/intercept.  
+3. **Global Bridging**
+   - Follows the approach of Roy et al. (2016): gather all overlapping values across the entire dataset, fit one “universal” slope/intercept.
    - Useful if you need *scene-wide* or *region-wide* continuity between two or more sensors (e.g., L5 → L7 → L8).
 
-4. **Chaining**  
+4. **Chaining**
    - Allows any number of sensors to be combined in sequence, producing a single transform from the first sensor to the last.
 
-5. **Lightweight**  
+5. **Lightweight**
    - Minimal dependencies: `numpy`, `scikit-learn`, and optionally `pandas`.
 
-6. **Earth Engine Submodule**  
+6. **Earth Engine Submodule**
    - A dedicated `earth_engine` subpackage provides GEE-specific helpers (e.g., for Landsat) that you can incorporate in your Earth Engine workflows.
 
 ---
@@ -80,7 +86,7 @@ print("Overall slope (sensor0->sensor3):", chain_result['final_slope'])
 print("Overall intercept (sensor0->sensor3):", chain_result['final_intercept'])
 
 # Apply sensor0 -> sensor3 transform
-sensor0_on_sensor3_scale = (chain_result['final_slope'] * sensor0 
+sensor0_on_sensor3_scale = (chain_result['final_slope'] * sensor0
                             + chain_result['final_intercept'])
 print("sensor0 mapped onto sensor3 scale:", sensor0_on_sensor3_scale)
 ```
@@ -116,8 +122,8 @@ Please see the docs and example notebooks for more examples.
 
 ## Installation
 
-1. Clone or download this repository.  
-2. (Optional) Create and activate a virtual environment.  
+1. Clone or download this repository.
+2. (Optional) Create and activate a virtual environment.
 3. Install in editable mode:
 
 ```bash
@@ -136,7 +142,7 @@ and access the library’s functionality.
 
 ## Acknowledgements
 
-- **Joseph Emile Honour Percival** performed the initial research in 2021 during his PhD at **Kyoto University**, where the pixel-level time-series normalization idea was first applied to multi-sensor analysis.  
+- **Joseph Emile Honour Percival** performed the initial research in 2021 during his PhD at **Kyoto University**, where the pixel-level time-series normalization idea was first applied to multi-sensor analysis.
 - The global bridging logic is inspired by Roy et al. (2016), which outlines regression-based continuity for Landsat sensors across large areas.
 
 Roy, David P., V. Kovalskyy, H. K. Zhang, Eric F. Vermote, L. Yan, S. S. Kumar, and A. Egorov. "Characterization of Landsat-7 to Landsat-8 reflective wavelength and normalized difference vegetation index continuity." Remote sensing of Environment 185 (2016): 57-70.
