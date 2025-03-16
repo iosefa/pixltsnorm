@@ -1,4 +1,4 @@
-# usage/timeseries-harmonization.md
+# Time Series Harmonization
 
 This guide provides an overview of **time-series harmonization** in **pixltsnorm**, detailing how multiple sensors can be aligned onto a single reference scale. Whether your objective is to unify Landsat 5, 7, and 8 NDVI datasets, or to calibrate other remote-sensing measurements, pixltsnorm offers linear and seasonal-based transformations to standardize time-series data.
 

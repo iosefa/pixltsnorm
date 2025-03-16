@@ -106,11 +106,9 @@ This is more computationally intense and requires a consistent, large time serie
 ## 7. Further Reading
 
 1. **Local vs. Global Sensor Differences**  
-   Roy, D. P. et al., *Characterization of Landsat-7 to Landsat-8 Reflective Wavelength and NDVI Continuity*, *Remote Sensing of Environment* 185, 57–70 (2016).  
-2. **BRDF & Angular Effects**  
-   Wanner, W. et al., *Global BRDF, Albedo, and Reflectance Anisotropy of Land Surfaces*, *Journal of Geophysical Research* 100, 21077–21090 (1995).  
-3. **Robust Row-wise NDVI**  
-   Gao, F. et al., *Bidirectional NDVI and Atmospheric Correction for Vegetation Canopy*, *IEEE Transactions on Geoscience and Remote Sensing* 40, 1269–1278 (2002).
+   Roy, D. P. et al., *Characterization of Landsat-7 to Landsat-8 Reflective Wavelength and NDVI Continuity*, *Remote Sensing of Environment* 185, 57–70 (2016).
+2. **Robust Row-wise NDVI**  
+   Gao, F. et al., *Bidirectional NDVI and atmospherically resistant BRDF inversion for vegetation canopy*, *IEEE Transactions on Geoscience and Remote Sensing* 40, 1269–1278 (2002).
 
 ---
 
