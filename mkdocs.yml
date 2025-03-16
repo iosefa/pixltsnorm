@@ -37,10 +37,12 @@ nav:
     - Home: index.md
     - Installation: installation.md
     - Usage:
-        - usage/landsat-timeseries-creation.md
         - usage/timeseries-harmonization.md
         - usage/timeseries-harmonization-global.md
         - usage/timeseries-harmonization-local.md
+        - Google Earth Engine:
+              - usage/earth-engine/landsat-timeseries-creation.md
+              - usage/earth-engine/supported-missions.md
     - Contributing: contributing.md
     - Changelog: https://github.com/iosefa/pixltsnorm/releases
     - Report Issues: https://github.com/iosefa/pixltsnorm/issues

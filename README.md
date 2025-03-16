@@ -2,7 +2,7 @@
 
 **Pixel-based Linear Time Series Normalizer**
 
-![Normalized Landsat NDVI Timeseries](./docs/images/example.png)
+![Normalized Landsat NDVI Time Series](./docs/images/example.png)
 
 `pixltsnorm` is a small, focused Python library that:
 

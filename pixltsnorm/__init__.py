@@ -9,7 +9,7 @@ Submodules:
   - harmonize            : Chain bridging logic (two-pass) for arrays.
   - dataframe_harmonize : Tools for DataFrame-based bridging.
   - models               : Contains `fit_linear` and `fit_seasonal` routines.
-  - utils                : Utility functions for outlier filtering, timeseries extraction.
+  - utils                : Utility functions for outlier filtering, time series extraction.
   - earth_engine         : (Subpackage) Earth Engine–specific routines (e.g., NDVI creation).
 
 Exposed API:

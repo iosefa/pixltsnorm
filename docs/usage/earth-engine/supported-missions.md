@@ -1,0 +1,3 @@
+# Supported Satellite Missions
+
+* Landsat
