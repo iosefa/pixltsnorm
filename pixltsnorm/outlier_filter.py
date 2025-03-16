@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def filter_outliers(sensor_a_values, sensor_b_values, threshold=0.2):
     """
     Remove pairs where abs(sensor_a - sensor_b) > threshold.
