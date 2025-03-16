@@ -39,14 +39,11 @@ def fit_linear(x_values, y_values):
     Fit a simple linear regression: y ~ coef*x + intercept
     Returns a dict { 'coef': float, 'intercept': float }
     """
-    x = np.array(x_values).reshape(-1,1)
-    y = np.array(y_values).reshape(-1,1)
+    x = np.array(x_values).reshape(-1, 1)
+    y = np.array(y_values).reshape(-1, 1)
 
     reg = LinearRegression().fit(x, y)
-    return {
-        'coef': reg.coef_[0][0],
-        'intercept': reg.intercept_[0]
-    }
+    return {"coef": reg.coef_[0][0], "intercept": reg.intercept_[0]}
 
 
 def fit_seasonal(x_values, y_values, time_index, period):
@@ -62,8 +59,12 @@ def fit_seasonal(x_values, y_values, time_index, period):
     x_arr = np.array(x_values)
     y_arr = np.array(y_values)
 
-    dec_x = seasonal_decompose(x_arr, period=period, model='additive', extrapolate_trend='freq')
-    dec_y = seasonal_decompose(y_arr, period=period, model='additive', extrapolate_trend='freq')
+    dec_x = seasonal_decompose(
+        x_arr, period=period, model="additive", extrapolate_trend="freq"
+    )
+    dec_y = seasonal_decompose(
+        y_arr, period=period, model="additive", extrapolate_trend="freq"
+    )
 
     seas_x = dec_x.seasonal
     seas_y = dec_y.seasonal
@@ -75,8 +76,8 @@ def fit_seasonal(x_values, y_values, time_index, period):
     linres = fit_linear(x_deseason, y_deseason)
 
     return {
-        'coef': linres['coef'],
-        'intercept': linres['intercept'],
-        'seasonal_x': seas_x,
-        'seasonal_y': seas_y
+        "coef": linres["coef"],
+        "intercept": linres["intercept"],
+        "seasonal_x": seas_x,
+        "seasonal_y": seas_y,
     }

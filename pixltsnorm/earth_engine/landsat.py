@@ -25,13 +25,15 @@ Example usage:
 import ee
 
 
-def create_reduce_region_function(geometry,
-                                  reducer=ee.Reducer.mean(),
-                                  scale=30,
-                                  crs='EPSG:4326',
-                                  bestEffort=True,
-                                  maxPixels=1e13,
-                                  tileScale=4):
+def create_reduce_region_function(
+    geometry,
+    reducer=ee.Reducer.mean(),
+    scale=30,
+    crs="EPSG:4326",
+    bestEffort=True,
+    maxPixels=1e13,
+    tileScale=4,
+):
     """Creates a region reduction function.
 
     Creates a region reduction function intended to be used as the input function
@@ -86,59 +88,67 @@ def create_reduce_region_function(geometry,
             crs=crs,
             bestEffort=bestEffort,
             maxPixels=maxPixels,
-            tileScale=tileScale)
-
-        return ee.Feature(geometry, stat).set(
-            {
-                'millis': img.date().millis()
-            }
+            tileScale=tileScale,
         )
+
+        return ee.Feature(geometry, stat).set({"millis": img.date().millis()})
 
     return reduce_region_function
 
 
 def addNDVI(image):
-    spacecraft_id = ee.String(image.get('SPACECRAFT_ID'))
+    spacecraft_id = ee.String(image.get("SPACECRAFT_ID"))
     ndvi_bands = ee.Algorithms.If(
-        spacecraft_id.equals('LANDSAT_5'),
-        ['SR_B4', 'SR_B3'],
+        spacecraft_id.equals("LANDSAT_5"),
+        ["SR_B4", "SR_B3"],
         ee.Algorithms.If(
-            spacecraft_id.equals('LANDSAT_7'),
-            ['SR_B4', 'SR_B3'],
-            ['SR_B5', 'SR_B4']  # for Landsat 8
-        )
+            spacecraft_id.equals("LANDSAT_7"),
+            ["SR_B4", "SR_B3"],
+            ["SR_B5", "SR_B4"],  # for Landsat 8
+        ),
     )
-    return image.addBands(image.normalizedDifference(ndvi_bands).rename('NDVI'))
+    return image.addBands(image.normalizedDifference(ndvi_bands).rename("NDVI"))
 
 
 def addNBR(image):
-    spacecraft_id = ee.String(image.get('SPACECRAFT_ID'))
+    spacecraft_id = ee.String(image.get("SPACECRAFT_ID"))
     nbr_bands = ee.Algorithms.If(
-        spacecraft_id.equals('LANDSAT_5'),
-        ['SR_B7', 'SR_B4'],
+        spacecraft_id.equals("LANDSAT_5"),
+        ["SR_B7", "SR_B4"],
         ee.Algorithms.If(
-            spacecraft_id.equals('LANDSAT_7'),
-            ['SR_B7', 'SR_B4'],
-            ['SR_B7', 'SR_B5']  # for Landsat 8
-        )
+            spacecraft_id.equals("LANDSAT_7"),
+            ["SR_B7", "SR_B4"],
+            ["SR_B7", "SR_B5"],  # for Landsat 8
+        ),
     )
-    return image.addBands(image.normalizedDifference(nbr_bands).rename('NBR'))
+    return image.addBands(image.normalizedDifference(nbr_bands).rename("NBR"))
 
 
 def cloudMaskL457(image, spacecraft_id):
     cloud = ee.Image(0)
 
-    if spacecraft_id in ['LANDSAT_5', 'LANDSAT_7']:
-        qa = image.select(['QA_PIXEL'])
-        basic_mask = qa.bitwiseAnd(1 << 1).Or(qa.bitwiseAnd(1 << 3)).Or(qa.bitwiseAnd(1 << 4))
-        confidence_mask = qa.bitwiseAnd(3 << 8).gte(1 << 8).And(qa.bitwiseAnd(3 << 10).gte(1 << 10))  # Modified line
+    if spacecraft_id in ["LANDSAT_5", "LANDSAT_7"]:
+        qa = image.select(["QA_PIXEL"])
+        basic_mask = (
+            qa.bitwiseAnd(1 << 1).Or(qa.bitwiseAnd(1 << 3)).Or(qa.bitwiseAnd(1 << 4))
+        )
+        confidence_mask = (
+            qa.bitwiseAnd(3 << 8).gte(1 << 8).And(qa.bitwiseAnd(3 << 10).gte(1 << 10))
+        )  # Modified line
 
         cloud = basic_mask.And(confidence_mask)
 
-    elif spacecraft_id == 'LANDSAT_8':
-        qa = image.select(['QA_PIXEL'])
-        basic_mask = qa.bitwiseAnd(1 << 1).Or(qa.bitwiseAnd(1 << 3)).Or(qa.bitwiseAnd(1 << 4)).Or(qa.bitwiseAnd(1 << 2))
-        confidence_mask = qa.bitwiseAnd(3 << 8).gte(1 << 8).And(qa.bitwiseAnd(3 << 10).gte(1 << 10))  # Modified line
+    elif spacecraft_id == "LANDSAT_8":
+        qa = image.select(["QA_PIXEL"])
+        basic_mask = (
+            qa.bitwiseAnd(1 << 1)
+            .Or(qa.bitwiseAnd(1 << 3))
+            .Or(qa.bitwiseAnd(1 << 4))
+            .Or(qa.bitwiseAnd(1 << 2))
+        )
+        confidence_mask = (
+            qa.bitwiseAnd(3 << 8).gte(1 << 8).And(qa.bitwiseAnd(3 << 10).gte(1 << 10))
+        )  # Modified line
 
         cloud = basic_mask.And(confidence_mask)
 
@@ -148,6 +158,6 @@ def cloudMaskL457(image, spacecraft_id):
 
 
 def scale_factors(image):
-    optical_bands = image.select('SR_B.*').multiply(0.0000275).add(-0.2)
+    optical_bands = image.select("SR_B.*").multiply(0.0000275).add(-0.2)
     image = image.addBands(optical_bands, None, True)
     return image

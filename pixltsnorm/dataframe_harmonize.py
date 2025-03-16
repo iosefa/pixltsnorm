@@ -9,20 +9,20 @@ multiple pandas DataFrames onto a common reference scale. It offers:
   adjacencies in a sequence, eventually mapping each DataFrame to the chosen
   target DataFrame's scale.
 
-- **Global vs. Local**: 
+- **Global vs. Local**:
   - *Global approach*: Flatten and compute a single slope/intercept for the entire dataset.
   - *Local approach*: Fit a separate slope/intercept for each row (e.g., per-pixel),
     storing arrays of transforms for more fine-grained harmonization.
 
 - **Method**:
   - `'linear'` (multiple DataFrames supported): Simple linear calibration for each adjacency.
-  - `'seasonal_decompose'` (only valid for exactly two DataFrames): 
+  - `'seasonal_decompose'` (only valid for exactly two DataFrames):
     Not fully implemented for local bridging, but can be adapted if needed.
 
 Use this class if you have multiple DataFrames (e.g., NDVI data from different
-sensors) and want to align them onto one final sensor's scale, either at a 
+sensors) and want to align them onto one final sensor's scale, either at a
 whole-dataset (global) or row-by-row (local) level. The chaining logic ensures
-that each intermediate adjacency (df[i]→df[i+1]) is composed into a final 
+that each intermediate adjacency (df[i]→df[i+1]) is composed into a final
 transform (df[i]→target).
 """
 
@@ -58,8 +58,9 @@ class DataFrameHarmonizer:
          - compose with i->target => (i+1)->target
     """
 
-    def __init__(self, method='linear', period=None,
-                 outlier_threshold=0.2, approach='global'):
+    def __init__(
+        self, method="linear", period=None, outlier_threshold=0.2, approach="global"
+    ):
         """
         Args:
             method (str): 'linear' or 'seasonal_decompose'
@@ -72,7 +73,7 @@ class DataFrameHarmonizer:
         self.outlier_threshold = outlier_threshold
         self.approach = approach  # 'global' or 'local'
 
-        self._skip_cols = {'lon','lat'}
+        self._skip_cols = {"lon", "lat"}
         self.transforms_ = None
         self.target_index_ = None
         self.pairwise_left_ = []
@@ -109,20 +110,20 @@ class DataFrameHarmonizer:
             raise ValueError("Need at least two DataFrames for chain harmonization.")
 
         if target_index is None:
-            target_index = n-1
+            target_index = n - 1
         if not (0 <= target_index < n):
             raise ValueError(f"target_index {target_index} out of range [0..{n-1}]")
 
-        if self.method=='seasonal_decompose' and n>2:
+        if self.method == "seasonal_decompose" and n > 2:
             raise NotImplementedError(
                 "multi-sensor chaining with method='seasonal_decompose' not supported."
             )
 
         self.target_index_ = target_index
         # Initialize transforms
-        if self.approach=='global':
+        if self.approach == "global":
             # single slope/intercept per DF
-            self.transforms_ = [None]*n
+            self.transforms_ = [None] * n
             self.transforms_[target_index] = (1.0, 0.0)
         else:
             # local => store slope/intercept arrays
@@ -130,7 +131,7 @@ class DataFrameHarmonizer:
             n_rows = len(dfs[target_index])
             slope_arr = np.ones(n_rows, dtype=float)
             inter_arr = np.zeros(n_rows, dtype=float)
-            self.transforms_ = [None]*n
+            self.transforms_ = [None] * n
             self.transforms_[target_index] = {"slope": slope_arr, "inter": inter_arr}
 
         self.pairwise_left_.clear()
@@ -138,16 +139,16 @@ class DataFrameHarmonizer:
 
         # LEFT pass
         for i in range(target_index, 0, -1):
-            bridging_res = self._bridge_pair(dfs[i-1], dfs[i])
-            self.pairwise_left_.append(((i-1,i), bridging_res))
+            bridging_res = self._bridge_pair(dfs[i - 1], dfs[i])
+            self.pairwise_left_.append(((i - 1, i), bridging_res))
             # bridging_res => { "coef", "intercept" }, shape=() or shape=[n_rows]
-            self._compose_into(i-1, i, bridging_res)
+            self._compose_into(i - 1, i, bridging_res)
 
         # RIGHT pass
-        for i in range(target_index, n-1):
-            bridging_res = self._bridge_pair(dfs[i], dfs[i+1])
-            self.pairwise_right_.append(((i, i+1), bridging_res))
-            self._compose_into(i+1, i, bridging_res, reverse=False)
+        for i in range(target_index, n - 1):
+            bridging_res = self._bridge_pair(dfs[i], dfs[i + 1])
+            self.pairwise_right_.append(((i, i + 1), bridging_res))
+            self._compose_into(i + 1, i, bridging_res, reverse=False)
 
         return self
 
@@ -190,7 +191,7 @@ class DataFrameHarmonizer:
         :return: The resulting dataframe after applying the bridging method.
         :rtype: pandas.DataFrame
         """
-        if self.approach=='global':
+        if self.approach == "global":
             return self._bridge_global(dfA, dfB)
         else:
             return self._bridge_local(dfA, dfB)
@@ -215,13 +216,15 @@ class DataFrameHarmonizer:
         """
         overlap = self._overlap_columns(dfA, dfB)
         arrA, arrB = self._flatten_and_clean(dfA[overlap], dfB[overlap])
-        if len(arrA)==0:
+        if len(arrA) == 0:
             raise ValueError("No valid data after removing NaNs (global adjacency).")
 
         # If n=2 or method='linear' => no problem
-        small_harm = Harmonizer(method=self.method,
-                                period=self.period,
-                                outlier_threshold=self.outlier_threshold)
+        small_harm = Harmonizer(
+            method=self.method,
+            period=self.period,
+            outlier_threshold=self.outlier_threshold,
+        )
         small_harm.fit([arrA, arrB], target_index=1)
         slope, intercept = small_harm.transforms_[0]
         return {"coef": slope, "intercept": intercept}
@@ -244,8 +247,10 @@ class DataFrameHarmonizer:
         """
         overlap = self._overlap_columns(dfA, dfB)
         n_rows = len(dfA)
-        if len(dfB)!=n_rows:
-            raise ValueError("local bridging requires DF A and B have same number of rows")
+        if len(dfB) != n_rows:
+            raise ValueError(
+                "local bridging requires DF A and B have same number of rows"
+            )
 
         slopes = np.full(n_rows, np.nan, dtype=float)
         intercepts = np.full(n_rows, np.nan, dtype=float)
@@ -259,13 +264,13 @@ class DataFrameHarmonizer:
             mask = (~np.isnan(rowA)) & (~np.isnan(rowB))
             rowA_valid = rowA[mask]
             rowB_valid = rowB[mask]
-            if len(rowA_valid)==0:
+            if len(rowA_valid) == 0:
                 # remain NaN
                 continue
 
             # outlier filter => remove pairs where |A-B|>threshold
             rowA_f, rowB_f = self._filter_outliers(rowA_valid, rowB_valid)
-            if len(rowA_f)==0:
+            if len(rowA_f) == 0:
                 continue  # remain NaN
 
             # Now we do a single-sensor bridging => OLS or seasonal if exactly 2 DF
@@ -295,18 +300,20 @@ class DataFrameHarmonizer:
                                       functionality is attempted that is not implemented.
         """
         # If method='linear'
-        if self.method=='linear':
+        if self.method == "linear":
             # OLS: B ~ slope*A + intercept
             X = np.column_stack((np.ones_like(arrA), arrA))
             beta = np.linalg.lstsq(X, arrB, rcond=None)[0]
             intercept, slope = beta[0], beta[1]
             return slope, intercept
-        elif self.method=='seasonal_decompose':
+        elif self.method == "seasonal_decompose":
             # For local bridging => row's data => might do a decomposition =>
             # but you need a period. This might be short or missing.
             # We'll do a minimal approach: We'll skip implementing a real decomposition
             # for every row. Or you can do an actual statsmodels seasonal_decompose if you want.
-            raise NotImplementedError("local bridging + seasonal_decompose not fully implemented.")
+            raise NotImplementedError(
+                "local bridging + seasonal_decompose not fully implemented."
+            )
         else:
             raise ValueError(f"Unknown method='{self.method}'")
 
@@ -355,7 +362,7 @@ class DataFrameHarmonizer:
         b_i = bridging_res["intercept"]  # float or array
 
         # Are we in global or local approach?
-        if self.approach == 'global':
+        if self.approach == "global":
             slopeB, interB = self.transforms_[idxB]  # a 2-tuple
             if reverse:
                 new_slope = a_i * slopeB
@@ -378,10 +385,7 @@ class DataFrameHarmonizer:
                 new_slope = slopeB_arr * a_i
                 new_inter = a_i * interB_arr + b_i
 
-            self.transforms_[idxA] = {
-                "slope": new_slope,
-                "inter": new_inter
-            }
+            self.transforms_[idxA] = {"slope": new_slope, "inter": new_inter}
 
     # ---------------------------
     # Internal utilities
@@ -450,7 +454,7 @@ class DataFrameHarmonizer:
         :rtype: pandas.DataFrame
         """
         transform_i = self.transforms_[df_index]
-        if self.approach=='global':
+        if self.approach == "global":
             slope, intercept = transform_i
             return self._apply_global_transform(df, slope, intercept)
         else:
@@ -475,7 +479,7 @@ class DataFrameHarmonizer:
         new_df = df.copy()
         numeric_cols = [c for c in df.columns if c not in self._skip_cols]
         for col in numeric_cols:
-            new_df[col] = new_df[col]*slope + intercept
+            new_df[col] = new_df[col] * slope + intercept
         return new_df
 
     def _apply_local_transform(self, df, slope_arr, inter_arr):
@@ -505,7 +509,7 @@ class DataFrameHarmonizer:
         """
         new_df = df.copy()
         n_rows = len(df)
-        if len(slope_arr)!=n_rows:
+        if len(slope_arr) != n_rows:
             raise ValueError("Mismatch in row count for local transform.")
         numeric_cols = [c for c in df.columns if c not in self._skip_cols]
         for col in numeric_cols:

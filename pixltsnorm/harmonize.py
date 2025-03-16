@@ -73,7 +73,7 @@ class Harmonizer:
     :type seasonal_map_b_: Optional
     """
 
-    def __init__(self, method='linear', period=None, outlier_threshold=0.2):
+    def __init__(self, method="linear", period=None, outlier_threshold=0.2):
         """
         Class for managing data transformations and outlier detections with configurable
         parameters and optional seasonal alignment. It supports initialization of core
@@ -112,8 +112,9 @@ class Harmonizer:
         self.seasonal_map_a_ = None
         self.seasonal_map_b_ = None
 
-    def _harmonize_two_sensors(self, sensor_a_vals, sensor_b_vals,
-                               outlier_thresh, time_index=None):
+    def _harmonize_two_sensors(
+        self, sensor_a_vals, sensor_b_vals, outlier_thresh, time_index=None
+    ):
         """
         Harmonizes two sets of sensor data by applying either a linear alignment or
         seasonal decomposition, based on the selected method. The function filters
@@ -139,17 +140,21 @@ class Harmonizer:
         :rtype: tuple
         """
         # 1) filter outliers
-        a_filt, b_filt = filter_outliers(sensor_a_vals, sensor_b_vals, threshold=outlier_thresh)
+        a_filt, b_filt = filter_outliers(
+            sensor_a_vals, sensor_b_vals, threshold=outlier_thresh
+        )
 
-        if self.method == 'linear':
+        if self.method == "linear":
             # simple linear
             linres = fit_linear(a_filt, b_filt)
-            return linres['coef'], linres['intercept']
+            return linres["coef"], linres["intercept"]
 
-        elif self.method == 'seasonal_decompose':
+        elif self.method == "seasonal_decompose":
             # only valid if we have exactly 2 sensors & user gave time_index, period
             if time_index is None or self.period is None:
-                raise ValueError("time_index and period required for seasonal_decompose.")
+                raise ValueError(
+                    "time_index and period required for seasonal_decompose."
+                )
 
             # We must also filter out outliers in time sync. If you want to keep the same mask:
             # you can forcibly keep the same indices as a_filt,b_filt => you'd have to track them.
@@ -169,15 +174,17 @@ class Harmonizer:
             # Now do seasonal fit
             seasres = fit_seasonal(a_filt, b_filt, time_idx_inliers, self.period)
 
-            self.seasonal_map_a_ = dict(zip(time_idx_inliers, seasres['seasonal_x']))
-            self.seasonal_map_b_ = dict(zip(time_idx_inliers, seasres['seasonal_y']))
+            self.seasonal_map_a_ = dict(zip(time_idx_inliers, seasres["seasonal_x"]))
+            self.seasonal_map_b_ = dict(zip(time_idx_inliers, seasres["seasonal_y"]))
 
-            return seasres['coef'], seasres['intercept']
+            return seasres["coef"], seasres["intercept"]
 
         else:
             raise ValueError(f"Unknown method='{self.method}'.")
 
-    def fit(self, sensor_list, target_index=None, outlier_thresholds=None, time_indexes=None):
+    def fit(
+        self, sensor_list, target_index=None, outlier_thresholds=None, time_indexes=None
+    ):
         """
         Fits the harmonization model for a chain of sensors. This function establishes
         a set of transformations to harmonize data from multiple sensors in a sequential
@@ -214,93 +221,95 @@ class Harmonizer:
             than 2 sensors, as this is not yet supported.
         """
         n = len(sensor_list)
-        if n<2:
+        if n < 2:
             raise ValueError("Need >=2 sensors to chain harmonize.")
         if target_index is None:
-            target_index = n-1
+            target_index = n - 1
         if not (0 <= target_index < n):
             raise ValueError(f"target_index {target_index} out of range.")
 
-        if self.method=='seasonal_decompose' and n>2:
-            raise NotImplementedError("multi-sensor + seasonal_decompose not supported.")
+        if self.method == "seasonal_decompose" and n > 2:
+            raise NotImplementedError(
+                "multi-sensor + seasonal_decompose not supported."
+            )
 
         self.target_index_ = target_index
 
         # handle outlier_thresholds
         if outlier_thresholds is None:
-            outlier_thresholds = [self.default_outlier_threshold]*(n-1)
+            outlier_thresholds = [self.default_outlier_threshold] * (n - 1)
         else:
-            if len(outlier_thresholds)!= n-1:
+            if len(outlier_thresholds) != n - 1:
                 raise ValueError("wrong length for outlier_thresholds")
 
         self.outlier_thresholds_ = outlier_thresholds
 
         # init transforms => slope/intercept for each sensor->target
-        transforms = [None]*n
+        transforms = [None] * n
         transforms[target_index] = (1.0, 0.0)
 
         self.pairwise_left_.clear()
         self.pairwise_right_.clear()
-        self.seasonal_map_a_=None
-        self.seasonal_map_b_=None
+        self.seasonal_map_a_ = None
+        self.seasonal_map_b_ = None
 
         # left pass
-        for i in range(target_index,0,-1):
-            out_thresh = outlier_thresholds[i-1]
+        for i in range(target_index, 0, -1):
+            out_thresh = outlier_thresholds[i - 1]
             if time_indexes is None:
-                t_idx_a=None
+                t_idx_a = None
             else:
                 # if time_indexes is a list of length n => pass time_indexes[i-1]
                 # or if single array => pass it. We'll do minimal checks
-                if isinstance(time_indexes,(list, np.ndarray)):
-                    if len(time_indexes)==n:
-                        t_idx_a=time_indexes[i-1]
+                if isinstance(time_indexes, (list, np.ndarray)):
+                    if len(time_indexes) == n:
+                        t_idx_a = time_indexes[i - 1]
                     else:
-                        t_idx_a=time_indexes
+                        t_idx_a = time_indexes
                 else:
-                    t_idx_a=None
+                    t_idx_a = None
 
             coef, intercept = self._harmonize_two_sensors(
-                sensor_list[i-1],
+                sensor_list[i - 1],
                 sensor_list[i],
                 outlier_thresh=out_thresh,
-                time_index=t_idx_a
+                time_index=t_idx_a,
             )
-            self.pairwise_left_.append(((i-1, i),(coef, intercept)))
+            self.pairwise_left_.append(((i - 1, i), (coef, intercept)))
 
             slope_i, inter_i = transforms[i]
-            slope_new = coef*slope_i
-            inter_new = coef*inter_i + intercept
-            transforms[i-1]= (slope_new, inter_new)
+            slope_new = coef * slope_i
+            inter_new = coef * inter_i + intercept
+            transforms[i - 1] = (slope_new, inter_new)
 
         # right pass
-        for i in range(target_index, n-1):
+        for i in range(target_index, n - 1):
             out_thresh = outlier_thresholds[i]
             if time_indexes is None:
-                t_idx_a=None
+                t_idx_a = None
             else:
-                if isinstance(time_indexes,(list, np.ndarray)):
-                    if len(time_indexes)==n:
-                        t_idx_a=time_indexes[i]
+                if isinstance(time_indexes, (list, np.ndarray)):
+                    if len(time_indexes) == n:
+                        t_idx_a = time_indexes[i]
                     else:
-                        t_idx_a=time_indexes
+                        t_idx_a = time_indexes
                 else:
-                    t_idx_a=None
+                    t_idx_a = None
 
             coef, intercept = self._harmonize_two_sensors(
                 sensor_list[i],
-                sensor_list[i+1],
+                sensor_list[i + 1],
                 outlier_thresh=out_thresh,
-                time_index=t_idx_a
+                time_index=t_idx_a,
             )
-            self.pairwise_right_.append(((i, i+1),(coef, intercept)))
+            self.pairwise_right_.append(((i, i + 1), (coef, intercept)))
 
-            slope_i, inter_i= transforms[i]
-            slope_new = slope_i*coef
-            inter_new = coef*inter_i + intercept
-            transforms[i+1]= (slope_new, inter_new)
+            slope_i, inter_i = transforms[i]
+            slope_new = slope_i * coef
+            inter_new = coef * inter_i + intercept
+            transforms[i + 1] = (slope_new, inter_new)
 
-        self.transforms_= transforms
+        self.transforms_ = transforms
         return self
 
     def transform(self, sensor_index, x, t=None):
@@ -333,35 +342,35 @@ class Harmonizer:
         if self.transforms_ is None:
             raise RuntimeError("must call fit first")
 
-        slope, intercept= self.transforms_[sensor_index]
+        slope, intercept = self.transforms_[sensor_index]
 
-        if self.method=='linear':
+        if self.method == "linear":
             # normal
-            return slope*np.array(x)+ intercept
+            return slope * np.array(x) + intercept
 
-        elif self.method=='seasonal_decompose':
+        elif self.method == "seasonal_decompose":
             # only valid if n=2
             if t is None:
                 raise ValueError("time index needed for seasonal_decompose transform")
 
             # if sensor_index== target => pass x back
             # else => x-> deseason => slope*(x-seasA)+ intercept + seasB
-            out=[]
-            x_arr=np.array(x,ndmin=1)  # handle scalar or array
+            out = []
+            x_arr = np.array(x, ndmin=1)  # handle scalar or array
             # handle t similarly
-            t_arr=np.array(t,ndmin=1)
+            t_arr = np.array(t, ndmin=1)
 
-            for xi,ti in zip(x_arr,t_arr):
-                if sensor_index== self.target_index_:
+            for xi, ti in zip(x_arr, t_arr):
+                if sensor_index == self.target_index_:
                     out.append(xi)
                 else:
-                    seasA= self.seasonal_map_a_.get(ti,0.0)
-                    seasB= self.seasonal_map_b_.get(ti,0.0)
-                    x_des= xi - seasA
-                    y_hat= slope*x_des+ intercept+ seasB
+                    seasA = self.seasonal_map_a_.get(ti, 0.0)
+                    seasB = self.seasonal_map_b_.get(ti, 0.0)
+                    x_des = xi - seasA
+                    y_hat = slope * x_des + intercept + seasB
                     out.append(y_hat)
 
-            if len(x_arr)==1: # single value
+            if len(x_arr) == 1:  # single value
                 return out[0]
             return np.array(out)
 

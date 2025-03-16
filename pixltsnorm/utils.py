@@ -49,7 +49,9 @@ import numpy as np
 import pandas as pd
 
 
-def unify_and_extract_timeseries(dfs, row_index=0, skip_cols=("lon","lat"), date_format="%Y-%m"):
+def unify_and_extract_timeseries(
+    dfs, row_index=0, skip_cols=("lon", "lat"), date_format="%Y-%m"
+):
     """
     Unify the date columns across multiple DataFrames by:
       1) Identifying columns not in `skip_cols`.
@@ -88,7 +90,7 @@ def unify_and_extract_timeseries(dfs, row_index=0, skip_cols=("lon","lat"), date
 
     list_of_arrays = []
     for rdf in reindexed_dfs:
-        arr = rdf.iloc[row_index, :-len(skip_cols)].values
+        arr = rdf.iloc[row_index, : -len(skip_cols)].values
         list_of_arrays.append(arr)
 
     dates = pd.to_datetime(union_cols, format=date_format, errors="coerce")
