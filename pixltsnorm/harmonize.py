@@ -1,3 +1,39 @@
+"""
+harmonize.py
+============
+
+Provides the core `Harmonizer` class for chaining and calibrating sensor data
+using either simple linear transformations or seasonal decomposition. This class
+supports multi-sensor time-series alignment by applying pairwise transformations
+in a two-pass manner.
+
+**Key Functionalities**:
+- **Outlier Filtering**: Discard or ignore data points whose difference exceeds a
+  specified threshold.
+- **Linear Method**: Map each sensor’s scale to the target sensor with a slope-intercept fit.
+- **Seasonal Decomposition** (2-sensor only): Remove a seasonal component from each
+  sensor’s data, regress the residuals, then reapply the target sensor’s seasonal pattern.
+
+**Usage**:
+1. Instantiate a `Harmonizer` with a chosen method (e.g. 'linear').
+2. Call `fit()` on a list of sensor data arrays, optionally specifying outlier thresholds
+   and time indexes (for seasonal mode).
+3. Transform new data by calling `transform(sensor_index, x, t=...)`.
+
+**Example**::
+    from pixltsnorm.harmonize import Harmonizer
+
+    # Suppose we have two sensors (arrA, arrB), each is a 1D NumPy array
+    harm = Harmonizer(method='linear', outlier_threshold=0.2)
+    harm.fit([arrA, arrB], target_index=1)
+    # Now transform new data from sensor A
+    new_value_harmonized = harm.transform(sensor_index=0, x=some_value)
+
+This module relies on separate utility and model functions:
+- **`utils.filter_outliers`** for threshold-based outlier removal,
+- **`models.fit_linear`** and **`models.fit_seasonal`** for different calibration approaches.
+"""
+
 import numpy as np
 from .utils import filter_outliers
 from .models import fit_linear, fit_seasonal

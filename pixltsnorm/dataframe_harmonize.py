@@ -1,3 +1,32 @@
+"""
+dataframe_harmonize.py
+======================
+
+This module provides a class (`DataFrameHarmonizer`) for bridging and aligning
+multiple pandas DataFrames onto a common reference scale. It offers:
+
+- **Two-pass Chaining**: Uses a left pass and right pass to apply pairwise
+  adjacencies in a sequence, eventually mapping each DataFrame to the chosen
+  target DataFrame's scale.
+
+- **Global vs. Local**: 
+  - *Global approach*: Flatten and compute a single slope/intercept for the entire dataset.
+  - *Local approach*: Fit a separate slope/intercept for each row (e.g., per-pixel),
+    storing arrays of transforms for more fine-grained harmonization.
+
+- **Method**:
+  - `'linear'` (multiple DataFrames supported): Simple linear calibration for each adjacency.
+  - `'seasonal_decompose'` (only valid for exactly two DataFrames): 
+    Not fully implemented for local bridging, but can be adapted if needed.
+
+Use this class if you have multiple DataFrames (e.g., NDVI data from different
+sensors) and want to align them onto one final sensor's scale, either at a 
+whole-dataset (global) or row-by-row (local) level. The chaining logic ensures
+that each intermediate adjacency (df[i]→df[i+1]) is composed into a final 
+transform (df[i]→target).
+"""
+
+
 import numpy as np
 
 from .harmonize import Harmonizer

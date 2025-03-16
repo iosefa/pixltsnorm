@@ -50,8 +50,8 @@ nav:
         - examples/local-ndvi-harmonization.ipynb
         - examples/create-ndvi-timeseries-with-earthengine.ipynb
     - API Reference:
-        - harmonize module: api/dataframe_harmonize.md
-        - dataframe_harmonize module: api/harmonize.md
+        - harmonize module: api/harmonize.md
+        - dataframe_harmonize module: api/dataframe_harmonize.md
         - models module: api/models.md
         - utils module: api/utils.md
         - earth engine:
