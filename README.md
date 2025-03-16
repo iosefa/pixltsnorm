@@ -3,6 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/pixltsnorm.svg)](https://pypi.org/project/pixltsnorm/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/iosefa/pixltsnorm?logo=docker&label=pulls)](https://hub.docker.com/r/iosefa/pixltsnorm)
 [![Contributors](https://img.shields.io/github/contributors/iosefa/pixltsnorm.svg?label=contributors)](https://github.com/iosefa/pixltsnorm/graphs/contributors)
+[![Downloads](https://pepy.tech/badge/pixltsnorm)](https://pepy.tech/project/pixltsnorm)
 [![Tests](https://img.shields.io/github/actions/workflow/status/iosefa/pixltsnorm/main.yml?branch=main)](https://github.com/iosefa/pixltsnorm/actions/workflows/main.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/iosefa/pixltsnorm/main)](https://codecov.io/gh/iosefa/pixltsnorm)
 
