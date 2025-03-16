@@ -10,13 +10,14 @@ authors = [
   { name="Joseph Emile Honour Percival", email="ipercival@gmail.com" }
 ]
 readme = "README.md"
-license = "MIT"
+license = {text = "MIT"}
 keywords = ["remote sensing", "time series", "normalization"]
 requires-python = ">=3.10"
 dependencies = [
   "numpy",
   "pandas",
-  "scikit-learn"
+  "scikit-learn",
+  "statsmodels"
 ]
 classifiers = [
    "Development Status :: 3 - Alpha",
@@ -25,11 +26,30 @@ classifiers = [
    "Topic :: Scientific/Engineering :: GIS"
  ]
 
-[project.urls]
-"Bug Tracker" = "https://github.com/iosefa/pixltsnorm"
-"Source" = "https://github.com/iosefa/pixltsnorm"
-
 [project.optional-dependencies]
 earth_engine = [
   "earthengine-api>=0.1.350"
 ]
+
+dev = [
+    "pytest==8.0.0",
+    "jupyter~=1.0.0",
+    "pre-commit~=3.6.0",
+    "python-dotenv==1.0.1",
+    "sphinx==7.2.6",
+    "sphinx_rtd_theme==2.0.0"
+]
+
+docs = [
+    "mkdocs>=1.4.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocs-jupyter>=0.24.0",
+    "mkdocstrings>=0.21.0",
+    "mkdocstrings-python>=0.10.0",
+    "mkdocs-git-revision-date-plugin>=0.3.2",
+    "pymdown-extensions>=9.10"
+]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/iosefa/pixltsnorm"
+"Source" = "https://github.com/iosefa/pixltsnorm"

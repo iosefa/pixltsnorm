@@ -40,8 +40,9 @@ Use pixltsnorm to standardize multi-sensor time-series from, say, Landsat 5, 7, 
 
 We provide sample Jupyter notebooks to help you get started:
 
-- **[Quick Start: Global NDVI Harmonization](examples/global-ndvi-harmonization.ipynb)**
-- **[Local (per-pixel) NDVI Harmonization](examples/per-pixel-ndvi-harmonization.ipynb)**
+- **[Quick Start: Timeseries Harmonization](examples/global-ndvi-harmonization.ipynb)**
+- **[Global NDVI Harmonization](examples/global-ndvi-harmonization.ipynb)**
+- **[Local (per-pixel) NDVI Harmonization](examples/local-ndvi-harmonization.ipynb)**
 - **[Creating NDVI Timeseries with Earth Engine](examples/create-ndvi-timeseries-with-earthengine.ipynb)**
 
 To run these notebooks:

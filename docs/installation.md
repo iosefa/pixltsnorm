@@ -24,7 +24,7 @@ This will install all necessary Python dependencies automatically (e.g., NumPy, 
 pip show pixltsnorm
 ```
 
-Note, to use the `earth-engine` modules, you will need to separately install ...
+Note, to use the `earth_engine` modules, you will need to separately install ...
 
 ---
 
