@@ -1,6 +1,6 @@
 # Contributing to pixltsnorm
 
-Thank you for contributing to `pixltsnorm`! 
+Thank you for contributing to `pixltsnorm`!
 
 ## Code of Conduct
 
@@ -11,7 +11,7 @@ By participating in this project, please follow our [Code of Conduct](code_of_co
 ### Reporting Bugs
 
 - **Check Existing Issues** — Before opening a new bug report, see if the issue has already been reported. If it has, add any additional details in a comment.
-  
+
 - **Submit a Report** — If the issue hasn't been reported, open a new issue and fill out the provided template.
 
 ### Suggesting Enhancements
@@ -32,11 +32,40 @@ To contribute via pull requests:
 
 ## Style Guidelines
 
-### Python
+## Pre-commit Hooks
+
+This project uses [pre-commit](https://pre-commit.com/) to automate code formatting and checks. After cloning:
+
+1. Install dev dependencies:
+   ```bash
+   pip install -e '.[dev]'
+   ```
+
+2. Install the pre-commit hooks:
+   ```bash
+   pre-commit install
+   ```
+
+Now, whenever you commit, Black and other checks run automatically. This ensures consistent style (Black formatting, no trailing whitespace, etc.) across the project with minimal manual effort.
+
+### Python Code Style
 
 - Follow the [PEP 8](https://pep8.org/) style guide.
-- Use type hints in functions.
-- Add documentation to public APIs.
+- We use **[Black](https://black.readthedocs.io/en/stable/)** for code formatting:
+  1. Install dev dependencies:
+     ```bash
+     pip install -e '.[dev]'
+     ```
+  2. Format your code:
+     ```bash
+     black .
+     ```
+  3. Confirm no changes are needed:
+     ```bash
+     black --check .
+     ```
+- Include type hints for function signatures.
+- Add documentation to public APIs using docstrings.
 
 ### Git Commit Messages
 
@@ -51,8 +80,8 @@ To contribute via pull requests:
 1. **Ensure `main` is up to date**:
    Confirm all changes intended for the release are merged into the `main` branch.
 
-2. **Update the version**: 
-   Bump the version number based on the type of release (major, minor, or patch) following [semantic versioning](https://semver.org/) in `pyproject.toml`.  
+2. **Update the version**:
+   Bump the version number based on the type of release (major, minor, or patch) following [semantic versioning](https://semver.org/) in `pyproject.toml`.
    - For example, if your current version is `0.1.0` and you are making a backward-compatible feature addition, you might change it to `0.2.0`.
 
 3. **Create a new tag**:

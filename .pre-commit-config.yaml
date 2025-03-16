@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.1.0   # or the latest Black version
+    hooks:
+      - id: black
+        language_version: python3
+        additional_dependencies: []
+        # additional_dependencies can pin black, e.g. ["black==23.1.0"]
+        # remove or comment out if using your local version from pyproject/venv.
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      # Add other built-in hooks if desired
