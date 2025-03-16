@@ -11,7 +11,7 @@ authors = [
 ]
 readme = "README.md"
 license = "MIT"
-keywords = ["remote sensing", "time series", "normalization", "NDVI", "Landsat"]
+keywords = ["remote sensing", "time series", "normalization"]
 requires-python = ">=3.10"
 dependencies = [
   "numpy",
@@ -26,5 +26,10 @@ classifiers = [
  ]
 
 [project.urls]
-"Bug Tracker" = "https://github.com/landlensdb/landlensdb"
-"Source" = "https://github.com/landlensdb/landlensdb"
+"Bug Tracker" = "https://github.com/iosefa/pixltsnorm"
+"Source" = "https://github.com/iosefa/pixltsnorm"
+
+[project.optional-dependencies]
+earth_engine = [
+  "earthengine-api>=0.1.350"
+]

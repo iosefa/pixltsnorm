@@ -1,9 +1,3 @@
-"""
-outlier_filter.py
-
-Methods for identifying/removing outliers in overlapping sensor data pairs.
-"""
-
 import numpy as np
 
 def filter_outliers(sensor_a_values, sensor_b_values, threshold=0.2):

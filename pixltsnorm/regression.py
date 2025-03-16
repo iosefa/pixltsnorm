@@ -1,12 +1,6 @@
-"""
-regression.py
-
-Functions for fitting a simple linear model (y = slope*x + intercept)
-and applying that model.
-"""
-
 import numpy as np
 from sklearn.linear_model import LinearRegression
+
 
 def fit_regression(x_values, y_values):
     """
@@ -29,6 +23,7 @@ def fit_regression(x_values, y_values):
         'intercept': reg.intercept_[0],
         'model': reg
     }
+
 
 def apply_regression(x_values, model):
     """
